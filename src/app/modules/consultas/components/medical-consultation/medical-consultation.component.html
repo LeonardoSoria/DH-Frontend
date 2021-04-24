@@ -1,0 +1,154 @@
+<div class="container-fluid">
+  <br>
+  <br>
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 *ngIf="!isFormActive">Lista de Consultas Médicas</h1>
+      <h1 *ngIf="isFormActive">Formulario de Consultas Médicas</h1>
+    </div>
+  </div>
+
+  <!-- Lista de Consultas Médicas -->
+  <div class="col-lg-12" *ngIf="!isFormActive">
+    <div class="row">
+      <div class="col-12 col-lg-6 p-0">
+        <button mat-stroked-button color="primary" (click)="addMedicalConsultation()">
+          <span class="material-icons">add</span>
+          Agregar
+        </button>
+      </div>
+      <div class="col-12 col-lg-6 p-0">
+        <mat-form-field class="w-100">
+          <mat-label>Filtro</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="..." #input autocomplete="off" [(ngModel)]="value">
+          <button mat-button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="w-100 mat-elevation-z8">
+        <table mat-table style="width: 100%" [dataSource]="this.dataSource" matSort>
+          <ng-container matColumnDef="description">
+            <th style="padding: 5px 10px;" mat-header-cell *matHeaderCellDef> Descripción.</th>
+            <td style="padding: 5px 10px;" mat-cell *matCellDef="let item"> {{item.description}} </td>
+          </ng-container>
+          <ng-container matColumnDef="prescription">
+            <th style="padding: 5px 10px;" mat-header-cell *matHeaderCellDef> Receta.</th>
+            <td style="padding: 5px 10px;" mat-cell *matCellDef="let item"> {{item.prescription}} </td>
+          </ng-container>
+          <ng-container matColumnDef="date">
+            <th style="padding: 5px 10px;" mat-header-cell *matHeaderCellDef> Fecha de Consulta.</th>
+            <td style="padding: 5px 10px;" mat-cell *matCellDef="let item"> {{item.date}} </td>
+          </ng-container>
+          <ng-container matColumnDef="patient">
+            <th style="padding: 5px 10px;" mat-header-cell *matHeaderCellDef> Paciente.</th>
+            <td style="padding: 5px 10px;" mat-cell *matCellDef="let item">
+              <span *ngIf="item.patient != null">{{item.patient.name}}</span>
+              <span *ngIf="item.patient == null">Ocurrió un error! No tiene paciente asignado</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="doctor">
+            <th style="padding: 5px 10px;" mat-header-cell *matHeaderCellDef> Doctor.</th>
+            <td style="padding: 5px 10px;" mat-cell *matCellDef="let item">
+              <span *ngIf="item.doctor != null">{{item.doctor.name}}</span>
+              <span *ngIf="item.doctor == null">Ocurrió un error! No tiene doctor asignado</span>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">No se encontraron resultados para: "{{input.value}}"</td>
+          </tr>
+        </table>
+        <mat-paginator [length]="this.medicalConsultations.length"
+                       [pageSize]="5"
+                       [pageSizeOptions]="[5, 10, 20, 30, 40, 50, 100, 200]"
+                       (page)="onPageEvent($event)" showFirstLastButtons>
+        </mat-paginator>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario de Usuarios -->
+  <div class="col-lg-12" *ngIf="isFormActive">
+    <div class="row">
+      <button mat-stroked-button color="warn" (click)="backToList()">
+        <span class="material-icons">keyboard_arrow_left</span>
+        Volver
+      </button>
+    </div>
+    <br>
+    <div class="row">
+      <form class="w-100" [formGroup]="medicalConsultationForm" (submit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-5">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Descripción</mat-label>
+              <input matInput placeholder="..." formControlName="description" #description maxlength="255" autofocus>
+              <mat-hint align="end">{{description.value.length}} / 255</mat-hint>
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Receta</mat-label>
+              <input matInput placeholder="..." formControlName="prescription" #prescription maxlength="255">
+              <mat-hint align="end">{{prescription.value.length}} / 255</mat-hint>
+            </mat-form-field>
+          </div>
+          <div class="col-md-2">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Fecha de Consulta</mat-label>
+              <input matInput formControlName="date" #date [matDatepicker]="picker">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Paciente</mat-label>
+              <mat-select formControlName="patientId" id="patientId">
+                <div *ngFor="let item of patients">
+                  <mat-option *ngIf="item.id != null" value="{{item.id}}">{{item.name}}</mat-option>
+                  <mat-option *ngIf="item == null" value="0">No existe</mat-option>
+                </div>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Doctor</mat-label>
+              <mat-select formControlName="doctorId" id="doctorId">
+                <div *ngFor="let item of doctors">
+                  <mat-option *ngIf="item.id != null" value="{{item.id}}">{{item.name}}</mat-option>
+                  <mat-option *ngIf="item == null" value="0">No existe</mat-option>
+                </div>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 text-lg-right">
+            <br>
+            <button type="submit" mat-stroked-button color="primary">
+              <span class="material-icons">save</span>
+              Guardar
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="loading" *ngIf="spinner">
+    <mat-spinner></mat-spinner>
+  </div>
+
+</div>
+
+
+
+
+

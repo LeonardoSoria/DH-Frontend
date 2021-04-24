@@ -1,0 +1,10 @@
+
+mat-card.menu-card{
+  background-color: rgba(30, 46, 80, 0.1);
+}
+
+mat-card.menu-card > mat-card-header {
+  background-color: var(--mediumColor);
+  color: var(--softColor);
+  border-radius: 5px;
+}

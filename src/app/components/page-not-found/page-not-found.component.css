@@ -1,0 +1,35 @@
+
+.errorTitle{
+  font-size: 9em;
+  color: var(--mediumColor);
+  font-weight: bold;
+}
+
+.errorDesc {
+  color: #202020;
+  margin-top: 40px;
+}
+
+
+.verticalAlign{
+  margin: calc(25vh - 105px) 0px;
+}
+
+img.spaceman{
+  animation: spaceman 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes spaceman {
+  from {
+    transform: rotate(2deg);
+  }
+  to {
+    transform: rotate(-2deg);
+  }
+}
+
+img.spacemanImg{
+  background-color: #e5e5e5;
+  border-radius: 50%;
+  opacity: 0.5;
+}

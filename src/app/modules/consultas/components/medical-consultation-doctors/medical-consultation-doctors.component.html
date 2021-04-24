@@ -1,0 +1,114 @@
+<div class="container-fluid">
+  <br>
+  <br>
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 *ngIf="!showMedicalConsultation">Lista de Doctores</h1>
+      <h1 *ngIf="showMedicalConsultation">Lista de Consultas</h1>
+    </div>
+  </div>
+
+  <div *ngIf="showMedicalConsultation" class="row">
+    <div class="col-lg-12">
+      <button mat-stroked-button color="warn" (click)="showMedicalConsultation = false;">
+        <span class="material-icons">keyboard_arrow_left</span>
+        Volver
+      </button>
+    </div>
+  </div>
+
+  <!-- Lista de Pacientes -->
+  <div class="col-lg-12">
+    <div *ngIf="!showMedicalConsultation">
+      <div class="row">
+        <div class="col-12 col-lg-6 p-0">
+          <mat-form-field class="w-100">
+            <mat-label>Filtro</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="..." #input autocomplete="off" [(ngModel)]="value">
+            <button mat-button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="w-100 mat-elevation-z8">
+          <table mat-table style="width: 100%" [dataSource]="this.dataSource" matSort>
+            <ng-container matColumnDef="name">
+              <th style="padding: 5px 10px;" mat-header-cell *matHeaderCellDef> Nombre.</th>
+              <td style="padding: 5px 10px;" mat-cell *matCellDef="let item"> {{item.name}} </td>
+            </ng-container>
+            <ng-container matColumnDef="lastname">
+              <th style="padding: 5px 10px;" mat-header-cell *matHeaderCellDef> Apellido.</th>
+              <td style="padding: 5px 10px;" mat-cell *matCellDef="let item"> {{item.lastname}} </td>
+            </ng-container>
+            <ng-container matColumnDef="birthdate">
+              <th style="padding: 5px 10px;" mat-header-cell *matHeaderCellDef> Fecha de Nacimiento.</th>
+              <td style="padding: 5px 10px;" mat-cell *matCellDef="let item"> {{item.birthdate}} </td>
+            </ng-container>
+            <ng-container matColumnDef="address">
+              <th style="padding: 5px 10px;" mat-header-cell *matHeaderCellDef> Dirección.</th>
+              <td style="padding: 5px 10px;" mat-cell *matCellDef="let item"> {{item.address}} </td>
+            </ng-container>
+            <ng-container matColumnDef="speciality">
+              <th style="padding: 5px 10px;" mat-header-cell *matHeaderCellDef> Especialidad.</th>
+              <td style="padding: 5px 10px;" mat-cell *matCellDef="let item"> {{item.speciality}} </td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th style="padding: 5px 10px;" mat-header-cell *matHeaderCellDef> Acciones.</th>
+              <td style="padding: 5px 10px;" mat-cell *matCellDef="let item">
+                <button mat-icon-button matTooltip="Ver Consultas" aria-label="Ver">
+                  <mat-icon (click)="viewMedicalConsultation(item.id)" color="primary">remove_red_eye</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            <!-- Row shown when there is no matching data. -->
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" colspan="4">No se encontraron resultados para: "{{input.value}}"</td>
+            </tr>
+          </table>
+          <mat-paginator [length]="this.doctors.length"
+                         [pageSize]="5"
+                         [pageSizeOptions]="[5, 10, 20, 30, 40, 50, 100, 200]"
+                         (page)="onPageEvent($event)" showFirstLastButtons>
+          </mat-paginator>
+        </div>
+      </div>
+    </div>
+    <div style="justify-content: space-around" *ngIf="showMedicalConsultation" class="row">
+      <div *ngFor="let item of medicalConsultations">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Consulta Médica {{item.id}}</mat-card-title>
+            <mat-card-subtitle>{{item.date}}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-card-subtitle>Descripción:</mat-card-subtitle>
+            <p>
+              {{item.description}}
+            </p>
+            <br>
+            <br>
+            <mat-card-subtitle>Receta:</mat-card-subtitle>
+            <p>
+              {{item.prescription}}
+            </p>
+            <br>
+            <br>
+            <mat-card-subtitle>Paciente:</mat-card-subtitle>
+            <p>
+              {{item.patient.name}}
+            </p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <mat-card *ngIf="medicalConsultations.length <= 0">
+        <mat-card-header>
+          <mat-card-title>El doctor no tiene consultas :(</mat-card-title>
+        </mat-card-header>
+      </mat-card>
+    </div>
+  </div>
+</div>

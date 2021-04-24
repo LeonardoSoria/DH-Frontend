@@ -1,0 +1,17 @@
+.example-container {
+  width: 100%;
+  height: 80%;
+}
+
+.example-sidenav-content {
+}
+
+.example-sidenav {
+  padding: 20px;
+}
+
+.w-80{
+  width: 80% !important;
+}
+
+
